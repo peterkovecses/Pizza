@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pizza.Data\Pizza.Data.csproj" />
+    <Compile Remove="Validations\**" />
+    <EmbeddedResource Remove="Validations\**" />
+    <None Remove="Validations\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Validations\" />
+    <ProjectReference Include="..\Pizza.Data\Pizza.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

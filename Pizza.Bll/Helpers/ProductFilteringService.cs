@@ -4,6 +4,14 @@ namespace Pizza.Bll.Helpers
 {
     public static class ProductFilteringService
     {
+        public static IQueryable<T> FilterCategory<T>(this IQueryable<T> products, int? categoryId) where T : Product
+        {
+            if (categoryId == null)
+                return products;
+
+            return products.Where(p => p.CategoryId == categoryId);
+        }
+
         public static IQueryable<T> FilterByPrice<T>(this IQueryable<T> products, decimal? minPrice, decimal? maxPrice) where T : Product
         {
             if (minPrice == null)
@@ -18,7 +26,10 @@ namespace Pizza.Bll.Helpers
         public static IQueryable<T> SearchByTerm<T>(this IQueryable<T> products, string searchTerm) where T : Product
         {
             if (!string.IsNullOrEmpty(searchTerm))
-                return products.Where(p => p.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+            {
+                searchTerm = searchTerm.ToLower();
+                return products.Where(p => p.Name.ToLower().Contains(searchTerm) || (p.Description != null && p.Description.ToLower().Contains(searchTerm)));
+            }
 
             return products;
         }

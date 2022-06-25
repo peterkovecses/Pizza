@@ -4,6 +4,7 @@ using Pizza.Bll.Helpers;
 using Pizza.Bll.Interfaces;
 using Pizza.Data;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace Pizza.Bll.Services
 {
@@ -34,34 +35,66 @@ namespace Pizza.Bll.Services
             return product.Id;
         }
 
-        public Task<ProductDto> DeleteProductAsync(int id)
+        public async Task<ProductDto> DeleteProductAsync(int id)
         {
-            throw new NotImplementedException();
+            var product = await _dbContext.Products.SingleAsync(p => p.Id == id);
+
+            _dbContext.Products.Remove(product);
+
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<Product, ProductDto>(product);
         }
 
-        public Task<IEnumerable<ProductDto>> DeleteProductsAsync(int[] ids)
+        public async Task<IEnumerable<ProductDto>> DeleteProductsAsync(int[] ids)
         {
-            throw new NotImplementedException();
+            var products = new List<Product>();
+            foreach (var id in ids)
+            {
+                var product = await _dbContext.Products.FindAsync(id);
+
+                products.Add(product);
+            }
+
+            _dbContext.Products.RemoveRange(products);
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
         }
 
-        public Task<ProductDto> GetProductAsync(int id)
+        public async Task<ProductDto> GetProductAsync(int id)
         {
-            throw new NotImplementedException();
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+            return _mapper.Map<ProductDto>(product);
         }
 
-        public Task<IEnumerable<ProductDto>> GetProductsAsync(ProductQueryParameters queryParameters)
+        public async Task<IEnumerable<ProductDto>> GetProductsAsync(ProductQueryParameters queryParameters)
         {
-            throw new NotImplementedException();
+            var products = await _dbContext.Products
+                .FilterCategory(queryParameters.CategoryId)
+                .FilterByPrice(queryParameters.MinPrice, queryParameters.MaxPrice)
+                .SearchByTerm(queryParameters.SearchTerm)
+                .OrderProductByCustom(queryParameters.SortBy, queryParameters.SortOrder)
+                .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
+                .Take(queryParameters.PageSize)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
         }
 
-        public Task<bool> IsProductExists(int id)
+        public async Task<bool> IsProductExists(int id)
         {
-            throw new NotImplementedException();
+            return await _dbContext.Products.AnyAsync(b => b.Id == id);
         }
 
-        public Task UpdateProductAsync(ProductDto productDto)
+        public async Task UpdateProductAsync(ProductDto productDto)
         {
-            throw new NotImplementedException();
+            var productInDb = await _dbContext.Products.SingleAsync(p => p.Id == productDto.Id);
+
+            _mapper.Map(productDto, productInDb);
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }
