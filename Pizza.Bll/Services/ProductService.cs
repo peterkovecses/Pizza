@@ -39,7 +39,7 @@ namespace Pizza.Bll.Services
         {
             var product = await _dbContext.Products.SingleAsync(p => p.Id == id);
 
-            _dbContext.Products.Remove(product);
+            product.IsDeleted = true;
 
             await _dbContext.SaveChangesAsync();
 
@@ -48,23 +48,17 @@ namespace Pizza.Bll.Services
 
         public async Task<IEnumerable<ProductDto>> DeleteProductsAsync(int[] ids)
         {
-            var products = new List<Product>();
-            foreach (var id in ids)
-            {
-                var product = await _dbContext.Products.FindAsync(id);
+            var productsToDelete = _dbContext.Products.Where(p => ids.Contains(p.Id));
+            await productsToDelete.ForEachAsync(p => p.IsDeleted = true);            
 
-                products.Add(product);
-            }
-
-            _dbContext.Products.RemoveRange(products);
             await _dbContext.SaveChangesAsync();
 
-            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(productsToDelete);
         }
 
         public async Task<ProductDto> GetProductAsync(int id)
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _dbContext.Products.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.Id == id);
 
             return _mapper.Map<ProductDto>(product);
         }
@@ -72,6 +66,7 @@ namespace Pizza.Bll.Services
         public async Task<IEnumerable<ProductDto>> GetProductsAsync(ProductQueryParameters queryParameters)
         {
             var products = await _dbContext.Products
+                .Where(p => p.IsDeleted == false)
                 .FilterCategory(queryParameters.CategoryId)
                 .FilterByPrice(queryParameters.MinPrice, queryParameters.MaxPrice)
                 .SearchByTerm(queryParameters.SearchTerm)
