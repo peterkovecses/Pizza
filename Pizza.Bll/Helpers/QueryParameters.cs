@@ -6,7 +6,7 @@
         private int _pageSize;
 
         public int PageNumber { get; set; }
-        public int PageSize { get => _pageSize; set => _pageSize = Math.Min(_maxSize, value); }
+        public int PageSize { get => _pageSize; set =>_pageSize = Math.Min(_maxSize, value); }
 
         public string SortBy { get; set; } = "Id";
 

@@ -63,8 +63,28 @@ namespace Pizza.Bll.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductsAsync(ProductQueryParameters queryParameters)
+        public async Task<IEnumerable<ProductDto>> GetProductsAsync_V1_0(ProductQueryParameters queryParameters)
         {
+            var products = await _dbContext.Products
+                .Where(p => p.IsDeleted == false)
+                .FilterCategory(queryParameters.CategoryId)
+                .FilterByPrice(queryParameters.MinPrice, queryParameters.MaxPrice)
+                .SearchByTerm(queryParameters.SearchTerm)
+                .OrderProductByCustom(queryParameters.SortBy, queryParameters.SortOrder)
+                .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
+                .Take(queryParameters.PageSize)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
+        }
+        public async Task<IEnumerable<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
+        {
+            if (queryParameters.PageNumber == 0)
+                queryParameters.PageNumber = 1;
+
+            if (queryParameters.PageSize == 0)
+                queryParameters.PageSize = 25;
+
             var products = await _dbContext.Products
                 .Where(p => p.IsDeleted == false)
                 .FilterCategory(queryParameters.CategoryId)

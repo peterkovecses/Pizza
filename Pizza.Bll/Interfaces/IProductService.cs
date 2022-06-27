@@ -5,7 +5,8 @@ namespace Pizza.Bll.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetProductsAsync(ProductQueryParameters queryParameters);
+        Task<IEnumerable<ProductDto>> GetProductsAsync_V1_0(ProductQueryParameters queryParameters);
+        Task<IEnumerable<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters);
         Task<ProductDto> GetProductAsync(int id);
         Task<int> CreateProductAsync(ProductDto productDto);
         Task UpdateProductAsync(ProductDto productDto);

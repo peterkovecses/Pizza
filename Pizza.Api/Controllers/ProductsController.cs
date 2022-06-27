@@ -6,6 +6,9 @@ using Pizza.Bll.Interfaces;
 
 namespace Pizza.Api.Controllers
 {
+    [ApiVersion("1.0")]
+    [ApiVersion("1.5", Deprecated = true)]
+    [ApiVersion("2.0")]
     [Route("products")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -17,10 +20,27 @@ namespace Pizza.Api.Controllers
             _productService = productService;
         }
 
+        [ApiVersion("1.0")]
         [HttpGet]
-        public async Task<IActionResult> GetProductsAsync([FromQuery] ProductQueryParameters queryParameters)
+        public async Task<IActionResult> GetProductsAsync_V1_0([FromQuery] ProductQueryParameters queryParameters)
         {
-            var products = await _productService.GetProductsAsync(queryParameters);
+            var products = await _productService.GetProductsAsync_V1_0(queryParameters);
+
+            return Ok(products);
+        }
+
+        [ApiVersion("1.5")]
+        [HttpGet]
+        public IActionResult GetProductsAsync_V1_5([FromQuery] ProductQueryParameters queryParameters)
+        {
+            return Ok();
+        }
+
+        [ApiVersion("2.0")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsAsync_V2_0([FromQuery] ProductQueryParameters queryParameters)
+        {            
+            var products = await _productService.GetProductsAsync_V2_0(queryParameters);
 
             return Ok(products);
         }
