@@ -5,6 +5,7 @@ using Pizza.Bll.Interfaces;
 using Pizza.Data;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Pizza.Bll.Services
 {
@@ -13,12 +14,14 @@ namespace Pizza.Bll.Services
         private readonly PizzaDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
+        private readonly IMemoryCache _memoryCache;
 
-        public ProductService(PizzaDbContext dbContext, IMapper mapper, ICategoryService categoryService)
+        public ProductService(PizzaDbContext dbContext, IMapper mapper, ICategoryService categoryService, IMemoryCache memoryCache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
             _categoryService = categoryService;
+            _memoryCache = memoryCache;
             _dbContext.Database.EnsureCreated();
         }
 
@@ -58,7 +61,16 @@ namespace Pizza.Bll.Services
 
         public async Task<ProductDto> GetProductAsync(int id)
         {
-            var product = await _dbContext.Products.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.Id == id);
+            var product = _memoryCache.Get<Product>(id);
+
+            if (product == null)
+            {
+                product = await _dbContext.Products.Where(p => p.IsDeleted == false).FirstOrDefaultAsync(p => p.Id == id);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(60));
+                _memoryCache.Set(id, product, cacheEntryOptions);
+            }
 
             return _mapper.Map<ProductDto>(product);
         }

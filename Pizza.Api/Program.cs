@@ -39,6 +39,9 @@ services.AddSingleton(mapper);
 services.AddScoped<IProductService, ProductService>();
 services.AddScoped<ICategoryService, CategoryService>();
 
+services.AddResponseCaching();
+services.AddMemoryCache();
+
 services.AddControllers();
 
 services.AddEndpointsApiExplorer();
@@ -46,7 +49,7 @@ services.AddEndpointsApiExplorer();
 services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.DefaultApiVersion = new ApiVersion(2, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ApiVersionReader =
         new HeaderApiVersionReader("X-API-Version");
@@ -77,6 +80,8 @@ if (app.Environment.IsDevelopment())
     }
    );
 }
+
+app.UseResponseCaching();
 
 app.UseHttpsRedirection();
 
