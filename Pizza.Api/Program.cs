@@ -18,6 +18,16 @@ var services = builder.Services;
 // Add services to the container.
 services.AddDbContext<PizzaDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("https://localhost:44375")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var mapperConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MappingProfile());
@@ -36,7 +46,7 @@ services.AddEndpointsApiExplorer();
 services.AddApiVersioning(options =>
 {
     options.ReportApiVersions = true;
-    options.DefaultApiVersion = new ApiVersion(1, 0);    
+    options.DefaultApiVersion = new ApiVersion(1, 0);
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ApiVersionReader =
         new HeaderApiVersionReader("X-API-Version");
@@ -69,6 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors();
 
 app.UseAuthorization();
 
