@@ -22,7 +22,7 @@ namespace Pizza.Api.Controllers
 
         [ApiVersion("1.0")]
         [HttpGet]
-        [ResponseCache(Duration = 60)]
+        [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "MinPrice", "MaxPrice", "SearchTerm", "CategoryId", "PageNumber", "PageSize", "SortBy", "SortOrder" })]
         public async Task<IActionResult> GetProductsAsync_V1_0([FromQuery] ProductQueryParameters queryParameters)
         {
             var products = await _productService.GetProductsAsync_V1_0(queryParameters);
@@ -39,7 +39,7 @@ namespace Pizza.Api.Controllers
 
         [ApiVersion("2.0")]
         [HttpGet]
-        [ResponseCache(Duration = 60)]
+        [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "MinPrice", "MaxPrice", "SearchTerm", "CategoryId", "PageNumber", "PageSize", "SortBy", "SortOrder" })]
         public async Task<IActionResult> GetProductsAsync_V2_0([FromQuery] ProductQueryParameters queryParameters)
         {            
             var products = await _productService.GetProductsAsync_V2_0(queryParameters);

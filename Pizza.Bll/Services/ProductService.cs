@@ -91,12 +91,6 @@ namespace Pizza.Bll.Services
         }
         public async Task<IEnumerable<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
         {
-            if (queryParameters.PageNumber == 0)
-                queryParameters.PageNumber = 1;
-
-            if (queryParameters.PageSize == 0)
-                queryParameters.PageSize = 25;
-
             var products = await _dbContext.Products
                 .Where(p => p.IsDeleted == false)
                 .FilterCategory(queryParameters.CategoryId)
