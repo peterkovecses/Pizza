@@ -12,7 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizza.Bll", "Pizza.Bll\Pizza.Bll.csproj", "{779C5245-3636-4107-9877-453E72E03C58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pizza.Bll", "Pizza.Bll\Pizza.Bll.csproj", "{779C5245-3636-4107-9877-453E72E03C58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizza.Tests", "Pizza.Tests\Pizza.Tests.csproj", "{195AFDAF-D4A7-4458-8DC8-9C16582D7A1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7E155F03-AA9A-441E-B1F2-911A2A10DD10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +36,16 @@ Global
 		{779C5245-3636-4107-9877-453E72E03C58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{779C5245-3636-4107-9877-453E72E03C58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{779C5245-3636-4107-9877-453E72E03C58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{195AFDAF-D4A7-4458-8DC8-9C16582D7A1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{195AFDAF-D4A7-4458-8DC8-9C16582D7A1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{195AFDAF-D4A7-4458-8DC8-9C16582D7A1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{195AFDAF-D4A7-4458-8DC8-9C16582D7A1A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{195AFDAF-D4A7-4458-8DC8-9C16582D7A1A} = {7E155F03-AA9A-441E-B1F2-911A2A10DD10}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7C6786E3-B626-4C86-B84B-AA2D0819969A}
