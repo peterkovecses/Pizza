@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pizza.Api.Helpers;
 using Pizza.Bll.Dtos;
 using Pizza.Bll.Helpers;
 using Pizza.Bll.Interfaces;
 
 namespace Pizza.Api.Controllers
 {
-    [ApiVersion("1.0")]
-    [ApiVersion("1.5", Deprecated = true)]
+    [ApiVersion("1.0", Deprecated = true)]
     [ApiVersion("2.0")]
     [Route("products")]
     [ApiController]
@@ -27,14 +27,9 @@ namespace Pizza.Api.Controllers
         {
             var products = await _productService.GetProductsAsync_V1_0(queryParameters);
 
-            return Ok(products);
-        }
+            var response = Ok(products);            
 
-        [ApiVersion("1.5")]
-        [HttpGet]
-        public IActionResult GetProductsAsync_V1_5([FromQuery] ProductQueryParameters queryParameters)
-        {
-            return Ok();
+            return Ok(products);
         }
 
         [ApiVersion("2.0")]
@@ -43,6 +38,9 @@ namespace Pizza.Api.Controllers
         public async Task<IActionResult> GetProductsAsync_V2_0([FromQuery] ProductQueryParameters queryParameters)
         {            
             var products = await _productService.GetProductsAsync_V2_0(queryParameters);
+
+            Response.AddPaginationHeader(products.CurrentPage, products.PageSize,
+                products.TotalItems, products.TotalPages);
 
             return Ok(products);
         }

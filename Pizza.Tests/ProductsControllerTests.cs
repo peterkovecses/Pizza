@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Pizza.Api.Controllers;
 using Pizza.Bll.Dtos;
 using Pizza.Bll.Helpers;
@@ -18,7 +19,13 @@ namespace Pizza.Tests
         {
             _productService = new FakeProductService();
             _controller = new ProductsController(_productService);
+            SetController();
             _queryParameters = new ProductQueryParameters();
+        }
+
+        private void SetController()
+        {
+            _controller.ControllerContext.HttpContext = new DefaultHttpContext();
         }
 
         [Fact]
@@ -59,7 +66,7 @@ namespace Pizza.Tests
             var okResult = await _controller.GetProductsAsync_V2_0(_queryParameters);
 
             // Assert
-            var products = Assert.IsType<List<ProductDto>>((okResult as OkObjectResult).Value);
+            var products = Assert.IsType<PagedList<ProductDto>>((okResult as OkObjectResult).Value);
             Assert.Equal(19, products.Count);
         }
 

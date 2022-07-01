@@ -28,5 +28,18 @@ namespace Pizza.Bll.Helpers
 
             return items.Provider.CreateQuery<T>(result);
         }
+
+        /// <summary>
+        /// Creates a PagedList<T> from an IQueryable by enumerating it asynchronously.
+        /// </summary>
+        /// <typeparam name="TSource">An IQueryable to create a PagedList<T> from.</typeparam>
+        /// <param name="source"></param>
+        /// <param name="pageNumber">Current page number.</param>
+        /// <param name="pageSize">Number of items per page.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a PagedList<T> that contains elements from the input sequence.</returns>
+        public static async Task<PagedList<TSource>> ToPagedListAsync<TSource>(this IQueryable<TSource> source, int pageNumber, int pageSize)
+        {
+            return await PagedList<TSource>.CreateAsync(source, pageNumber, pageSize);
+        }
     }
 }

@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pizza.Data.Interfaces;
 
 namespace Pizza.Data.Entities
 {
-    public class Product : EntityBase<Product>
+    public class Product : EntityBase<Product>, IProduct
     {
         public string Name { get; set; }
         public decimal Price { get; set; }

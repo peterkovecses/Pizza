@@ -12,6 +12,8 @@ namespace Pizza.Api
             CreateMap<ProductDto, Product>();
             CreateMap<Category, CategoryDto>();
             CreateMap<CategoryDto, Category>();
+
+            
         }
     }
 }

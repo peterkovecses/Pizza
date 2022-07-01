@@ -45,9 +45,10 @@ namespace Pizza.Tests.Helpers
             return await Task.FromResult(_products);
         }
 
-        public async Task<IEnumerable<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
+        public async Task<PagedList<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
         {
-            return await Task.FromResult(_products);
+            var products = _products.ToPagedList<ProductDto>(queryParameters.PageNumber, queryParameters.PageSize);
+            return await Task.FromResult(products);
         }
 
         public async Task<bool> IsProductExists(int id)

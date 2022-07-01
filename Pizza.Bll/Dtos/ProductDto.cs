@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Pizza.Data.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace Pizza.Bll.Dtos
 {
-    public class ProductDto
+    public class ProductDto : IProduct
     {
         public int Id { get; set; }
 

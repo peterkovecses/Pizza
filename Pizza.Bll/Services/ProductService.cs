@@ -6,6 +6,7 @@ using Pizza.Data;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Linq.Expressions;
 
 namespace Pizza.Bll.Services
 {
@@ -24,6 +25,16 @@ namespace Pizza.Bll.Services
             _memoryCache = memoryCache;
             _dbContext.Database.EnsureCreated();
         }
+
+        private readonly Expression<Func<Product, ProductDto>> _productSelector = p => new ProductDto
+        {
+            Id = p.Id,
+            Name = p.Name,
+            Description = p.Description,
+            Price = p.Price,
+            PhotoPath = p.PhotoPath,
+            CategoryId = p.CategoryId
+        };
 
         public async Task<int> CreateProductAsync(ProductDto productDto)
         {
@@ -89,19 +100,16 @@ namespace Pizza.Bll.Services
 
             return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
         }
-        public async Task<IEnumerable<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
+        public async Task<PagedList<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
         {
-            var products = await _dbContext.Products
+            return await _dbContext.Products
                 .Where(p => p.IsDeleted == false)
+                .Select(_productSelector)
                 .FilterCategory(queryParameters.CategoryId)
                 .FilterByPrice(queryParameters.MinPrice, queryParameters.MaxPrice)
                 .SearchByTerm(queryParameters.SearchTerm)
                 .OrderProductByCustom(queryParameters.SortBy, queryParameters.SortOrder)
-                .Skip((queryParameters.PageNumber - 1) * queryParameters.PageSize)
-                .Take(queryParameters.PageSize)
-                .ToListAsync();
-
-            return _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDto>>(products);
+                .ToPagedListAsync<ProductDto>(queryParameters.PageNumber, queryParameters.PageSize);                
         }
 
         public async Task<bool> IsProductExists(int id)
