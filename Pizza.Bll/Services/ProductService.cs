@@ -102,6 +102,7 @@ namespace Pizza.Bll.Services
         }
         public async Task<PagedList<ProductDto>> GetProductsAsync_V2_0(ProductQueryParameters queryParameters)
         {
+            throw new Exception();
             return await _dbContext.Products
                 .Where(p => p.IsDeleted == false)
                 .Select(_productSelector)
