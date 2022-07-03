@@ -56,6 +56,11 @@ namespace Pizza.Tests.Helpers
             return await Task.FromResult(_products.Any(p => p.Id == id));
         }
 
+        public async Task<bool> AreProductsExists(int[] ids)
+        {
+            return await Task.FromResult(_products.Where(p => ids.Contains(p.Id)).Count() == ids.Distinct().Count());
+        }
+
         public async Task UpdateProductAsync(ProductDto productDto)
         {
             if (!_products.Any(p => p.Id == productDto.Id))

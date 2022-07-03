@@ -157,10 +157,10 @@ namespace Pizza.Api.Controllers
         {
             _logger.LogInformation($"Run endpoint /api/product/Delete Post ");
 
-            foreach (var id in ids)
+            if (!await _productService.AreProductsExists(ids))
             {
-                if (!await _productService.IsProductExists(id))
-                    return NotFound();
+                _logger.LogTrace($"It is not possible to delete the elements with the specified id because at least one of them does not exist.");
+                return NotFound();
             }
 
             var products = await _productService.DeleteProductsAsync(ids);

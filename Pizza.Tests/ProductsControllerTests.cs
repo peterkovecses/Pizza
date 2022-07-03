@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Moq;
 using Pizza.Api.Controllers;
 using Pizza.Bll.Dtos;
 using Pizza.Bll.Helpers;
@@ -11,22 +13,21 @@ namespace Pizza.Tests
 {
     public class ProductsControllerTests
     {
-        private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
-        private readonly ProductsController _controller;
+        private ProductsController _controller;
         private readonly ProductQueryParameters _queryParameters;
 
         public ProductsControllerTests()
-        {
-            _productService = new FakeProductService();
-            _categoryService = new FakeCategoryService();
-            _controller = new ProductsController(_productService, _categoryService);
+        {          
             SetController();
             _queryParameters = new ProductQueryParameters();
         }
 
         private void SetController()
         {
+            var productService = new FakeProductService();
+            var categoryService = new FakeCategoryService();
+            var logger = Mock.Of<ILogger<ProductsController>>();
+            _controller = new ProductsController(productService, categoryService, logger);
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
         }
 
@@ -162,10 +163,38 @@ namespace Pizza.Tests
             var id = 77;
 
             // Act
-            var notFoundResult = await (_controller.DeleteProductAsync(id));
+            var notFoundResult = await _controller.DeleteProductAsync(id);
 
             // Assert
             Assert.IsType<NotFoundResult>(notFoundResult);
+        }
+
+        [Fact]
+        public async Task DeleteProductsAsync_WhenOneIdNotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var ids = new int[] { 1, 2, 87 };
+
+            // Act
+            var notFoundResult = await _controller.DeleteProductsAsync(ids);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(notFoundResult);
+        }
+
+        [Fact]
+        public async Task DeleteProductsAsync_WhenParameterIdsAreAllTheSame_DeletesOnlyOneProduct()
+        {
+            // Arrange
+            var ids = new int[] { 1, 1, 1 };
+
+            // Act            
+            var result = await _controller.DeleteProductsAsync(ids) as ObjectResult;
+            var deletedProducts = result.Value as IEnumerable<ProductDto>;
+            var actual = deletedProducts.Count();
+
+            // Assert
+            Assert.Equal(1, actual);
         }
     }
 }

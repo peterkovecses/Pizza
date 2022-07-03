@@ -160,6 +160,17 @@ namespace Pizza.Bll.Services
             return exists;
         }
 
+        public async Task<bool> AreProductsExists(int[] ids)
+        {
+            LogProductServiceStarted();
+
+            var exists = await _dbContext.Products.Where(p => ids.Contains(p.Id)).CountAsync() == ids.Distinct().Count();
+
+            LogProductServiceEnded();
+
+            return exists;
+        }
+
         public async Task UpdateProductAsync(ProductDto productDto)
         {
             LogProductServiceStarted();

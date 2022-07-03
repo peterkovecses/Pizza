@@ -13,5 +13,7 @@ namespace Pizza.Bll.Interfaces
         Task<ProductDto> DeleteProductAsync(int id);
         Task<IEnumerable<ProductDto>> DeleteProductsAsync(int[] ids);
         Task<bool> IsProductExists(int id);
+        Task<bool> AreProductsExists(int[] ids);
+
     }
 }
