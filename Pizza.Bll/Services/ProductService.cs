@@ -14,14 +14,12 @@ namespace Pizza.Bll.Services
     {
         private readonly PizzaDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ICategoryService _categoryService;
         private readonly IMemoryCache _memoryCache;
 
-        public ProductService(PizzaDbContext dbContext, IMapper mapper, ICategoryService categoryService, IMemoryCache memoryCache)
+        public ProductService(PizzaDbContext dbContext, IMapper mapper, IMemoryCache memoryCache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            _categoryService = categoryService;
             _memoryCache = memoryCache;
             _dbContext.Database.EnsureCreated();
         }
@@ -38,9 +36,6 @@ namespace Pizza.Bll.Services
 
         public async Task<int> CreateProductAsync(ProductDto productDto)
         {
-            if (!_categoryService.IsCategoryExists(productDto.CategoryId).Result)
-                return 0;
-
             var product = _mapper.Map<ProductDto, Product>(productDto);
 
             _dbContext.Products.Add(product);

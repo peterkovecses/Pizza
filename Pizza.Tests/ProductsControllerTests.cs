@@ -12,13 +12,15 @@ namespace Pizza.Tests
     public class ProductsControllerTests
     {
         private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
         private readonly ProductsController _controller;
         private readonly ProductQueryParameters _queryParameters;
 
         public ProductsControllerTests()
         {
             _productService = new FakeProductService();
-            _controller = new ProductsController(_productService);
+            _categoryService = new FakeCategoryService();
+            _controller = new ProductsController(_productService, _categoryService);
             SetController();
             _queryParameters = new ProductQueryParameters();
         }
@@ -110,6 +112,21 @@ namespace Pizza.Tests
             // Assert
             Assert.IsType<BadRequestObjectResult>(badRequestResult);
             _controller.ModelState.Clear();
+        }
+
+        [Fact]
+        public async Task CreateProductAsync_WhenCategoryIdNotExists_ReturnsNotFoundtObjectResult()
+        {
+            // Arrange
+            var product = new ProductDto { Id = 19, Name = "Canyon Road Cabernet", Description = "California", PhotoPath = "productImages/19.jpg", Price = 35, CategoryId = 14 };
+
+            // Act
+            var notFoundResult = await (_controller.CreateProductAsync(product));
+            var result = notFoundResult as ObjectResult;
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(notFoundResult);
+            Assert.Equal("The specified category does not exist.", result.Value);
         }
 
         [Fact]

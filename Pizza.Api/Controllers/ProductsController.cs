@@ -14,10 +14,12 @@ namespace Pizza.Api.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, ICategoryService categoryService)
         {
             _productService = productService;
+            _categoryService = categoryService;
         }
 
         [ApiVersion("1.0")]
@@ -63,10 +65,10 @@ namespace Pizza.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            productDto.Id = await _productService.CreateProductAsync(productDto);
-
-            if (productDto.Id == 0)
+            if (!_categoryService.IsCategoryExists(productDto.CategoryId).Result)
                 return NotFound("The specified category does not exist.");
+
+            productDto.Id = await _productService.CreateProductAsync(productDto);
 
             return CreatedAtAction("GetProduct", new { id = productDto.Id }, productDto);
         }
