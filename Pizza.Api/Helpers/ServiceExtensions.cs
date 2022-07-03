@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using System.Web.Http.ExceptionHandling;
 
 namespace Pizza.Api.Helpers
 {
