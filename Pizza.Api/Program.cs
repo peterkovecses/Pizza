@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Pizza.Api;
 using Pizza.Api.Helpers;
+using Pizza.Api.Logging;
 using Pizza.Bll.Interfaces;
 using Pizza.Bll.Services;
 using Pizza.Data;
@@ -16,6 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 // Add services to the container.
+services.AddFileLogger(options =>
+{
+    builder.Configuration.GetSection("Logging").GetSection("FileLogging").GetSection("Options").Bind(options);
+});
+
 services.AddDbContext<PizzaDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 services.AddCors(options =>

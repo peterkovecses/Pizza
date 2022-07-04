@@ -15,8 +15,6 @@ namespace Pizza.Api.Helpers
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
-                        // TODO: Logging
-
                         await context.Response.WriteAsync(new Error
                         {
                             StatusCode = context.Response.StatusCode,

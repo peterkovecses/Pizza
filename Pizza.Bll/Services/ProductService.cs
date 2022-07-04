@@ -144,7 +144,7 @@ namespace Pizza.Bll.Services
                 .OrderProductByCustom(queryParameters.SortBy, queryParameters.SortOrder)
                 .ToPagedListAsync<ProductDto>(queryParameters.PageNumber, queryParameters.PageSize);
 
-            LogProductServiceEnded();
+            throw new Exception("Test exception");
 
             return products;
         }
