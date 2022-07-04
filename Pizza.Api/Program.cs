@@ -65,6 +65,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
 
+//var logger = app.Services.GetService<ILogger<IApplicationBuilder>>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
