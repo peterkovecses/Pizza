@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pizza.Api.Helpers;
+using Pizza.Api.Interfaces;
 using Pizza.Bll.Dtos;
 using Pizza.Bll.Helpers;
 using Pizza.Bll.Interfaces;
@@ -15,12 +16,14 @@ namespace Pizza.Api.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
+        private readonly IFileOperationService _fileOperationService;
         private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductService productService, ICategoryService categoryService, ILogger<ProductsController> logger)
+        public ProductsController(IProductService productService, ICategoryService categoryService, IFileOperationService fileOperationService, ILogger<ProductsController> logger)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _fileOperationService = fileOperationService;
             _logger = logger;
         }
 
@@ -71,7 +74,7 @@ namespace Pizza.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProductAsync(ProductDto productDto)
+        public async Task<IActionResult> CreateProductAsync([FromForm]ProductDto productDto)
         {
             _logger.LogInformation("Run endpoint /api/product POST ");
 
@@ -85,6 +88,25 @@ namespace Pizza.Api.Controllers
             {
                 _logger.LogTrace($"Failed to create Product, because Category with Id {productDto.CategoryId} doesn't exist.");
                 return NotFound("The specified category does not exist.");
+            }
+
+            if (productDto.Photo != null && !string.IsNullOrEmpty(productDto.Photo.FileName))
+            {
+                var result = await _fileOperationService.SaveProductPhotoAsync(productDto);
+
+                if (result.Item2 == FileErrorType.NotAllowedExtension)
+                {
+                    ModelState.AddModelError("productDto.Photo", "The image extension is incorrect.");
+                    return BadRequest(ModelState);
+                }
+
+                if (result.Item2 == FileErrorType.Size)
+                {
+                    ModelState.AddModelError("productDto.Photo", "Maximum file size: 5 MB.");
+                    return BadRequest(ModelState);
+                }
+
+                productDto.PhotoPath = result.Item1;
             }
 
             productDto.Id = await _productService.CreateProductAsync(productDto);

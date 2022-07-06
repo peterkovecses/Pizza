@@ -5,7 +5,6 @@ using Moq;
 using Pizza.Api.Controllers;
 using Pizza.Bll.Dtos;
 using Pizza.Bll.Helpers;
-using Pizza.Bll.Interfaces;
 using Pizza.Data.Entities;
 using Pizza.Tests.Helpers;
 
@@ -26,8 +25,9 @@ namespace Pizza.Tests
         {
             var productService = new FakeProductService();
             var categoryService = new FakeCategoryService();
+            var fileOperationService = new FakeFileOperationService();
             var logger = Mock.Of<ILogger<ProductsController>>();
-            _controller = new ProductsController(productService, categoryService, logger);
+            _controller = new ProductsController(productService, categoryService, fileOperationService, logger);
             _controller.ControllerContext.HttpContext = new DefaultHttpContext();
         }
 

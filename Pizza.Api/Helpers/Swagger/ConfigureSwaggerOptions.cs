@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Pizza.Api.Helpers
+namespace Pizza.Api.Helpers.Swagger
 {
     // Source: https://github.com/microsoft/aspnet-api-versioning/blob/master/samples/aspnetcore/SwaggerSample/ConfigureSwaggerOptions.cs
     public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>

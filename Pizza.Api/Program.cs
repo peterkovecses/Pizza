@@ -6,14 +6,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Pizza.Api;
 using Pizza.Api.Helpers;
+using Pizza.Api.Helpers.Swagger;
+using Pizza.Api.Interfaces;
 using Pizza.Api.Logging;
+using Pizza.Api.Services;
 using Pizza.Bll.Interfaces;
 using Pizza.Bll.Services;
 using Pizza.Data;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var services = builder.Services;
 
 // Add services to the container.
@@ -44,6 +46,7 @@ services.AddSingleton(mapper);
 
 services.AddScoped<IProductService, ProductService>();
 services.AddScoped<ICategoryService, CategoryService>();
+services.AddScoped<IFileOperationService, FileOperationService>();
 
 services.AddResponseCaching();
 services.AddMemoryCache();
